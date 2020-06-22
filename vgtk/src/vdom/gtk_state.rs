@@ -64,7 +64,7 @@ fn add_child<Model: Component>(
                 .expect("Could not get Content Area from Infobar.")
                 .downcast_ref::<GtkBox>()
                 .expect("InfoBar's Content Area is not a Box.")
-                .add(widget);
+                .pack_start(widget, true, false, 0);
         } else {
             panic!(
                 "Infobar's children must be Widgets, but {} was found.",
