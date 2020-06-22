@@ -12,7 +12,8 @@ use gio::{Action, ActionExt, ApplicationFlags};
 use glib::{GString, IsA, Object, ObjectExt};
 use gtk::{
     Application, ApplicationWindowExt, BoxExt, GridExt, GtkApplicationExt, GtkWindowExt,
-    HeaderBarExt, ImageExt, LabelExt, NotebookExt, Widget, Window, WindowPosition, WindowType,
+    HeaderBarExt, ImageExt, InfoBar, InfoBarExt, LabelExt, NotebookExt, ResponseType,
+    Widget, Window, WindowPosition, WindowType
 };
 
 use colored::Colorize;
@@ -390,5 +391,30 @@ where
 
     fn get_child_height<P: IsA<Widget>>(&self, child: &P) -> i32 {
         self.get_cell_height(child)
+    }
+}
+
+pub trait InforBarExtHelpers: InfoBarExt {
+    fn new_with_buttons(btns: &[InfoBarButton]) -> Self;
+}
+
+impl InforBarExtHelpers for InfoBar {
+// where
+//     I: InfoBarExt
+// {
+    fn new_with_buttons(btns: &[InfoBarButton]) -> Self {
+        let ret = InfoBar::new();
+        btns.iter().for_each(|btn| { ret.add_button(btn.text, btn.response_id); });
+        ret
+    }
+}
+
+pub struct InfoBarButton {
+    text: &'static str,
+    response_id: ResponseType
+}
+impl InfoBarButton {
+    pub fn new(text: &'static str, response_id: ResponseType) -> Self {
+        Self { text, response_id }
     }
 }
