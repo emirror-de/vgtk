@@ -4,7 +4,8 @@ use gio::{Action, ActionExt, ActionMapExt};
 use glib::{prelude::*, Object, SignalHandlerId};
 use gtk::{
     self, prelude::*, Application, ApplicationWindow, Bin, Box as GtkBox, Builder, Container,
-    Dialog, Grid, GridExt, HeaderBar, Menu, MenuButton, MenuItem, ShortcutsWindow, Widget, Window,
+    Dialog, Grid, GridExt, HeaderBar, InfoBar, Menu, MenuButton, MenuItem, ShortcutsWindow, Widget, 
+    Window,
 };
 
 use super::State;
@@ -54,6 +55,19 @@ fn add_child<Model: Component>(
         } else {
             panic!(
                 "Application's children must be Windows or Actions, but {} was found.",
+                child.get_type()
+            );
+        }
+    } else if let Some(parent) = parent.downcast_ref::<InfoBar>() {
+        if let Some(widget) = child.downcast_ref::<Widget>() {
+            let content_area = parent.get_content_area()
+                .expect("Could not get Content Area from Infobar.")
+                .downcast_ref::<GtkBox>()
+                .expect("InfoBar's Content Area is not a Box.")
+                .add(widget);
+        } else {
+            panic!(
+                "Infobar's children must be Widgets, but {} was found.",
                 child.get_type()
             );
         }

@@ -73,3 +73,21 @@ impl Default for GridPosition {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct InfoBarButton {
+    label: gtk::Label,
+    response_type: gtk::ResponseType,
+}
+impl Default for InfoBarButton {
+    fn default() -> Self {
+        Self {
+            label: gtk::Label::new(None),
+            response_type: gtk::ResponseType::Accept
+         }
+    }
+}
+
+// impl gtk::LabelExt for InfoBarButton {
+
+// }
