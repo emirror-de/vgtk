@@ -59,17 +59,25 @@ fn add_child<Model: Component>(
             );
         }
     } else if let Some(parent) = parent.downcast_ref::<InfoBar>() {
-        if let Some(widget) = child.downcast_ref::<Widget>() {
-            let content_area = parent.get_content_area()
-                .expect("Could not get Content Area from Infobar.")
-                .downcast_ref::<GtkBox>()
-                .expect("InfoBar's Content Area is not a Box.")
-                .pack_start(widget, true, false, 0);
+        if let Some(content) = parent.get_content_area() {
+            if let Some(box_) = content.downcast_ref::<GtkBox>() {
+                if let Some(widget) = child.downcast_ref::<Widget>() {
+                    if child_spec.get_child_prop("center_widget").is_some() {
+                        box_.set_center_widget(Some(widget));
+                    } else {
+                        box_.add(widget);
+                    }
+                } else {
+                    panic!(
+                        "Infobar's children must be Widgets, but {} was found.",
+                        child.get_type()
+                    );
+                }
+            } else {
+                panic!("Infobar's Content Area is not a Box");
+            }
         } else {
-            panic!(
-                "Infobar's children must be Widgets, but {} was found.",
-                child.get_type()
-            );
+            panic!("Infobar has no Content Area",);
         }
     } else if let Some(button) = parent.downcast_ref::<MenuButton>() {
         // MenuButton: can only have a single child, either a `Menu` set with
