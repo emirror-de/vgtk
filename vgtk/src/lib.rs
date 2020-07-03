@@ -658,7 +658,7 @@ pub fn start<C: 'static + Component>() -> (Application, Scope<C>) {
 /// [Canceled]: https://docs.rs/futures/latest/futures/channel/oneshot/struct.Canceled.html
 pub fn run_dialog<C: 'static + Component>(
     parent: Option<&Window>,
-) -> impl Future<Output = Result<ResponseType, Canceled>> {
+) -> (impl Future<Output = Result<ResponseType, Canceled>>, Scope<C>) {
     run_dialog_props::<C>(parent, Default::default())
 }
 
@@ -673,7 +673,7 @@ pub fn run_dialog<C: 'static + Component>(
 pub fn run_dialog_props<C: 'static + Component>(
     parent: Option<&Window>,
     props: C::Properties,
-) -> impl Future<Output = Result<ResponseType, Canceled>> {
+) -> (impl Future<Output = Result<ResponseType, Canceled>>, Scope<C>) {
     let (channel, task) = ComponentTask::<C, ()>::new(props, None, None);
     let dialog: Dialog = task
         .object()
@@ -683,6 +683,7 @@ pub fn run_dialog_props<C: 'static + Component>(
     if let Some(parent) = parent {
         dialog.set_transient_for(Some(parent));
     }
+    let scope = task.scope();
     MainContext::ref_thread_default().spawn_local(task);
     let (notify, result) = oneshot::channel();
     channel.unbounded_send(ComponentMessage::Mounted).unwrap();
@@ -692,7 +693,7 @@ pub fn run_dialog_props<C: 'static + Component>(
         channel.unbounded_send(ComponentMessage::Unmounted).unwrap()
     });
     dialog.present();
-    result
+    (result, scope)
 }
 
 /// Turn an `FnOnce(A)` into an `Fn(A)` that will panic if you call it twice.
