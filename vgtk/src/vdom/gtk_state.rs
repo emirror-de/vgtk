@@ -115,7 +115,11 @@ fn add_child<Model: Component>(
         // Dialog: children must be added to the Dialog's content area through
         // get_content_area().
         if let Some(widget) = child.downcast_ref::<Widget>() {
-            dialog.get_content_area().add(widget);
+            if total == 2 && index == 0 {
+                dialog.set_titlebar(Some(widget));
+            } else {
+                dialog.get_content_area().add(widget);
+            }
         } else {
             panic!(
                 "Dialog's children must be Widgets, but {} was found.",
