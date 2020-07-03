@@ -438,6 +438,10 @@ where
         self.ui_state.as_ref().map(|state| state.object().clone())
     }
 
+    pub(crate) fn scope(&self) -> Scope<C> {
+        self.scope.clone()
+    }
+
     pub(crate) fn current_parent_scope() -> Scope<C> {
         LOCAL_CONTEXT.with(|key| {
             let lock = key.read().unwrap();
