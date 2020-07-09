@@ -14,10 +14,10 @@ keywords = ["gtk"]
 
 [dependencies]
 gio = "0.9.0"
-glib = "0.10.0"
+glib = "0.10.1"
 gdk = "0.13.0"
 gdk-pixbuf = "0.9.0"
-vgtk-macros = "0.3.0"
+vgtk-macros =  { path = '../macros' }
 proc-macro-hack = "0.5.16"
 proc-macro-nested = "0.1.6"
 log = "0.4.8"
